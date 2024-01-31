@@ -14,6 +14,8 @@ function App() {
       return this.price * this.qwt
     }
   })))
+  const totalPrice = menuData.map(el => el.totalPrice()).reduce((a,b) => a + b)
+  console.log(totalPrice)
   const addedItems = menuData.filter(el => el.qwt > 0)
   const addItems = (id) => {
     setMenuData(prevMenuData => prevMenuData.map(el => ({
@@ -52,6 +54,7 @@ function App() {
       <h1>CART</h1>
       <div className='cart'>
         {addedItems.length ? cartItems : "The cart is empty..yet"}
+        <h3>Total price: {totalPrice} USD</h3>
       </div>
     </div>
   );
