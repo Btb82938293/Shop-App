@@ -1,23 +1,58 @@
-import logo from './logo.svg';
 import './App.css';
+import React, {useState} from "react"
+import data from './data';
+import {nanoid} from "nanoid"
+import MenuItem from './MenuItem';
+import CartItem from './CartItem';
 
 function App() {
+  const [menuData, setMenuData] = useState(data.map(el => ({
+    ...el,
+    id: nanoid(),
+    qwt: 0,
+    totalPrice: function() {
+      return this.price * this.qwt
+    }
+  })))
+  const addedItems = menuData.filter(el => el.qwt > 0)
+  const addItems = (id) => {
+    setMenuData(prevMenuData => prevMenuData.map(el => ({
+      ...el,
+      qwt: el.id === id ? el.qwt + 1 : el.qwt
+    })))
+  }
+  const removeItems = (id) => {
+    setMenuData(prevMenuData => prevMenuData.map(el => ({
+      ...el,
+      qwt: el.id === id ? el.qwt - 1 : el.qwt
+    })))
+  }
+  const menuItems = menuData.map(el => <MenuItem 
+    addItems={addItems} 
+    key={el.id} 
+    id={el.id} 
+    name={el.name} 
+    price={el.price}  
+    />)
+    const cartItems = addedItems.map(el => <CartItem
+      removeItems={removeItems}
+      key={el.id} 
+      id={el.id} 
+      name={el.name}
+      price={el.price}
+      qwt={el.qwt}
+      totalPrice={el.totalPrice()}
+      />)
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>MENU</h1>
+      <div className='menu'>
+        {menuItems}
+      </div>
+      <h1>CART</h1>
+      <div className='cart'>
+        {addedItems.length ? cartItems : "The cart is empty..yet"}
+      </div>
     </div>
   );
 }
